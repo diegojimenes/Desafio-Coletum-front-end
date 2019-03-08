@@ -7,6 +7,7 @@ class App extends Component {
     this.state = {
       inputs : [],
     }    
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount(){
     fetch(`https://coletum.com/api/graphql?query={form_structure(formId:6950){label,componentId,type,helpBlock,order,components}}&token=7s5txcu909kwc48wookgw8g00occokk`)
@@ -16,11 +17,11 @@ class App extends Component {
     .catch(err => console.log(err))
   }
   inputComum(label,componentId,helpBlock,type){
-    return <label>
+    return <label key={componentId} >
             {label}{" "}
             <input 
             name={componentId}
-            key={componentId} 
+            ref={componentId}
             type={type} 
             placeholder={label}
             onChange={(e) => this.setState({[componentId]: e.target.value})}
@@ -30,7 +31,7 @@ class App extends Component {
           </label>
   }
   inputRating(label,componentId,helpBlock){
-    return <label>
+    return <label key={componentId}>
             {label}{" "}
             <StarRatings
               rating={this.state[componentId]}
@@ -40,6 +41,13 @@ class App extends Component {
               changeRating={(s) => this.setState({[componentId]: s})}
               numberOfStars={5}
               name='rating'
+            />
+            <input 
+            type='number' 
+            ref={componentId}
+            value={this.state[componentId]} 
+            name={componentId}
+            style={{display:'none'}}
             />
             {helpBlock}
           </label>
@@ -64,16 +72,24 @@ class App extends Component {
       }
   })
   }
+  handleSubmit(event) {
+    event.preventDefault()
+    const formData = {};
+    for (const field in this.refs) {
+      formData[field] = this.refs[field].value;
+    }
+    console.log('-->', formData);
+  }
   render() {
-    console.log(this.state)
     return (
       <div className="App">
         <header className="App-header">
           <h1>Cadastro pokemon</h1>
         </header>
-        <section>
+        <form onSubmit={this.handleSubmit}>
           {this.renderInputs()}
-        </section>
+          <input type='submit' value="ok"/>
+        </form>
       </div>
     );
   }
