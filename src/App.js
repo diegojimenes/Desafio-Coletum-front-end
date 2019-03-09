@@ -1,6 +1,7 @@
+import { Form,Row,Container,Col,Button } from 'react-bootstrap'
 import React, { Component,Fragment } from 'react';
+import { StyleSheet, css } from 'aphrodite';
 import StarRatings from 'react-star-ratings';
-import { Form } from 'react-bootstrap'
 import DatePicker from 'react-date-picker';
 class App extends Component {
   constructor(props){
@@ -19,27 +20,34 @@ class App extends Component {
   }
   inputComum(label,componentId,helpBlock,type){
     return <Form.Group key={componentId}>
-      <Form.Label>{label}{" "}</Form.Label>
-      <Form.Control 
-      type={type}  
-      placeholder={label}
-      name={componentId}
-      ref={componentId} />
-      <Form.Text>{helpBlock}</Form.Text>
-  </Form.Group>
+              <div className={css(styles.inputContainer)}>
+                <Form.Label className={css(styles.label)}>{label}{" "}</Form.Label>
+                <Form.Control 
+                className={css(styles.input)}
+                type={type}  
+                placeholder={label}
+                name={componentId}
+                ref={componentId} />
+              </div>
+              <Form.Text className={css(styles.help)}>{helpBlock}</Form.Text>
+          </Form.Group>
   }
+
   inputRating(label,componentId,helpBlock){
-    return <label key={componentId}>
-            {label}{" "}
-            <StarRatings
-              rating={this.state[componentId]}
-              starDimension="30px"
-              starSpacing="10px"
-              starRatedColor="blue"
-              changeRating={(s) => this.setState({[componentId]: s})}
-              numberOfStars={5}
-              name='rating'
-            />
+    return <Fragment key={componentId}>
+            <div className={css(styles.inputContainer)}>
+              <Form.Label className={css(styles.label)}>{label}{" "}</Form.Label>
+              <StarRatings
+                rating={this.state[componentId]}
+                starDimension="30px"
+                starSpacing="10px"
+                starRatedColor="#3a3a3a"
+                starHoverColor="#8a8a8a"
+                changeRating={(s) => this.setState({[componentId]: s})}
+                numberOfStars={5}
+                name='rating'
+              />
+            </div>
             <input 
             type='number' 
             ref={componentId}
@@ -47,27 +55,30 @@ class App extends Component {
             name={componentId}
             style={{display:'none'}}
             />
-            {helpBlock}
-          </label>
+            <Form.Text className={css(styles.help)}>{helpBlock}</Form.Text>
+          </Fragment>
   }
   inputDate(label,componentId,helpBlock){
     return <Fragment key={componentId}>
-      <Form.Group>
-        <Form.Label>{label}{" "}</Form.Label>
-          <DatePicker
-            onChange={(s) => this.setState({[componentId]: s})}
+            <Form.Group>
+                <div className={css(styles.inputContainer)}>
+                  <Form.Label className={css(styles.label)}>{label}{" "}</Form.Label>
+                  <DatePicker
+                    className={css(styles.date)}
+                    onChange={(s) => this.setState({[componentId]: s})}
+                    value={this.state[componentId]} 
+                  />
+                </div>
+                <Form.Text className={css(styles.help)}>{helpBlock}</Form.Text>
+            </Form.Group>
+            <input 
+            type='text' 
+            ref={componentId}
             value={this.state[componentId]} 
-          />
-          <Form.Text>{helpBlock}</Form.Text>
-      </Form.Group>
-      <input 
-      type='text' 
-      ref={componentId}
-      value={this.state[componentId]} 
-      name={componentId}
-      style={{display:'none'}}
-      />
-    </Fragment>
+            name={componentId}
+            style={{display:'none'}}
+            />
+          </Fragment>
   }
   renderInputs(){
     return this.state.inputs.map(({label,componentId,type,helpBlock}) => {
@@ -99,17 +110,74 @@ class App extends Component {
   }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1>Cadastro de Pokémon</h1>
-        </header>
-        <form onSubmit={this.handleSubmit}>
-          {this.renderInputs()}
-          <input type='submit' value="ok"/>
-        </form>
-      </div>
+      
+      <Container>
+      <Row>
+        <Col>
+        <div className="App">
+          <header className={css(styles.header)}>
+            <h1>Cadastro de Pokémon</h1>
+          </header>
+          <hr/>
+          <form onSubmit={this.handleSubmit}>
+            {this.renderInputs()}
+            <Button 
+            variant="dark" 
+            type='submit'
+            className={css(styles.submit)}>Enviar</Button>
+            <hr/>
+          </form>
+        </div>
+        </Col>
+      </Row>
+    </Container>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  header: {
+    paddingTop: 50,
+    paddingBottom: 10
+  },
+  inputContainer: {
+    display: "flex",
+    flexdirection: 'row',
+    textAlign: 'right',
+    '@media (max-width: 500px)': {
+      display: "block",
+      textAlign: 'left',
+    }
+  },
+  input: {
+    width: '50%',
+    '@media (max-width: 500px)': {
+      width: '100%',
+    }
+  },
+  label: {
+    width: 200,
+    marginRight: 30,
+    '@media (max-width: 500px)': {
+      width: 'auto',
+      marginRight: 10,
+    }
+  },
+  help: {
+    marginLeft: 230,
+    '@media (max-width: 500px)': {
+      marginLeft: 0
+    }
+  },
+  submit: {
+    marginLeft: 230,
+    '@media (max-width: 500px)': {
+      marginLeft: 0
+    }
+  },
+  date: {
+    width: '50%'
+  }
+})
 
 export default App;
